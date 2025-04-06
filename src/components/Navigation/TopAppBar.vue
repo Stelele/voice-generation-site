@@ -10,7 +10,7 @@
         <OhVueIcon name="bi-arrow-counterclockwise" :scale="1.5" />
       </div>
       <div class="hover:cursor-pointer h-fit w-fit">
-        <OhVueIcon name="bi-play-circle-fill" :scale="1.8" />
+        <OhVueIcon name="bi-play-circle-fill" :scale="1.8" @click="playAudio" />
       </div>
       <div class="hover:cursor-pointer h-fit w-fit">
         <OhVueIcon name="bi-arrow-clockwise" :scale="1.5" />
@@ -40,8 +40,12 @@
 </template>
 
 <script lang="ts" setup>
+import { TtsService } from '@/services/TtsService/TtsService';
+import { useReaderStore } from '@/stores/ReaderStore';
 import { OhVueIcon } from 'oh-vue-icons';
 import { computed, ref } from 'vue';
+
+const readerStore = useReaderStore()
 
 const cloudProps = ref({
   animate: false,
@@ -55,6 +59,12 @@ function toggleCloudAnimation(value: boolean) {
 
 function toggleCloudClick() {
   cloudProps.value.toggle = !cloudProps.value.toggle
+}
+
+async function playAudio() {
+  const audioStr = await TtsService.getBase64StrAudio(readerStore.text)
+  readerStore.audio = new Audio(audioStr)
+  readerStore.audio.play()
 }
 
 </script>
