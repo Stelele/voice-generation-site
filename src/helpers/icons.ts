@@ -16,6 +16,7 @@ import {
   GiBookshelf,
   BiPeople,
   BiPerson,
+  BiGearFill,
 } from 'oh-vue-icons/icons'
 
 
@@ -37,5 +38,6 @@ export function importIcons() {
     GiBookshelf,
     BiPeople,
     BiPerson,
+    BiGearFill,
   )
 }
