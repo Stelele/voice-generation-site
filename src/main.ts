@@ -11,6 +11,6 @@ importIcons()
 const app = createApp(App)
 
 app
-.use(router)
-.use(createPinia())
-.mount('#app')
+  .use(router)
+  .use(createPinia())
+  .mount('#app')

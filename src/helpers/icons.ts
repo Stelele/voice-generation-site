@@ -39,5 +39,6 @@ export function importIcons() {
     BiPeople,
     BiPerson,
     BiGearFill,
+    BiSearch,
   )
 }
