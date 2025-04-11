@@ -15,4 +15,17 @@
 <script lang="ts" setup>
 import TopAppBar from '@/components/Navigation/TopAppBar.vue';
 import SideBar from '@/components/Navigation/SideBar.vue';
+import { onBeforeMount } from 'vue';
+import { TtsService } from '@/services/TtsService/TtsService';
+import { useReaderStore } from '@/stores/ReaderStore';
+
+const readerStore = useReaderStore()
+
+onBeforeMount(() => {
+  getAIVoices()
+})
+
+async function getAIVoices() {
+  readerStore.voices = await TtsService.getVoices()
+}
 </script>

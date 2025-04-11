@@ -15,13 +15,21 @@ const Constants = {
   VOICES_URL: 'https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/voices/list',
 };
 
+export interface IAiVoice {
+  FriendlyName: string
+  Gender: string
+  Locale: string
+  Name: string
+  ShortName: string
+}
+
 export class EdgeTTS {
   private message_stream: Promise<ArrayBuffer>[] = []
   private audio_stream: Buffer[] = [];
   private ws!: WebSocket;
   private isProcessingDone = false;
 
-  async getVoices(): Promise<any[]> {
+  async getVoices(): Promise<IAiVoice[]> {
     const response = await fetch(`${Constants.VOICES_URL}?trustedclienttoken=${Constants.TRUSTED_CLIENT_TOKEN}`);
     const data = await response.json();
     return data.map((voice: any) => {

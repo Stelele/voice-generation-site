@@ -1,6 +1,6 @@
 <template>
   <dialog id="voice_select_modal" class="modal">
-    <div class="modal-box w-sm max-h-[80vh]" v-on-click-outside="hide">
+    <div class="modal-box w-lg max-h-[80vh]" v-on-click-outside="hide">
       <div class="flex flex-col gap-1 w-full h-full pt">
         <div class="flex flex-col gap-3 sticky -top-7 z-10 bg-base-200">
           <form method="dialog">
@@ -9,11 +9,10 @@
           <h3 class="text-lg font-bold">Voices</h3>
           <div class="flex gap-1 w-full">
             <div class="flex-grow w-full items-center">
-              <select class="select w-full">
-                <option disabled selected>Pick a color</option>
-                <option>Crimson</option>
-                <option>Amber</option>
-                <option>Velvet</option>
+              <select class="select w-full" v-model="readerStore.selections.local">
+                <option v-for="local, idx in readerStore.locals" :key="idx" :value="local.value">
+                  {{ local.label }}
+                </option>
               </select>
             </div>
             <div>
@@ -25,25 +24,26 @@
         </div>
         <div class="w-full">
           <ul class="list bg-base-100 rounded-box shadow-md">
-            <li v-for="i in 30" :key="i" class="list-row group items-center hover:bg-base-300/60">
+            <li v-for="voice, idx in filteredVoices" :key="idx"
+              class="list-row group items-center hover:bg-base-300/60">
               <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/1@94.webp" />
               </div>
               <div class="list-col-grow">
-                <div>Dua Lipa</div>
-                <div class="text-xs uppercase font-semibold opacity-60">Remaining Reason</div>
+                <div>{{ voice.FriendlyName }}</div>
+                <div class="text-xs uppercase font-semibold opacity-60">{{ voice.Gender }}</div>
               </div>
               <div>
-                <button class="btn btn-square btn-sm btn-ghost invisible group-hover:visible">
-                  <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none"
-                      stroke="currentColor">
-                      <path d="M6 3L20 12 6 21 6 3z"></path>
-                    </g>
-                  </svg>
+                <button class="btn btn-sm btn-ghost" :class="{
+                  'invisible group-hover:visible': readerStore.selections.voice !== voice.ShortName,
+                }">
+                  <OhVueIcon name="bi-play" :scale="2" />
                 </button>
               </div>
               <div>
-                <button class="btn btn-primary btn-sm btn-outline invisible group-hover:visible">
+                <button class="btn btn-primary btn-sm" :class="{
+                  'btn-outline invisible group-hover:visible': readerStore.selections.voice !== voice.ShortName,
+                  'btn-active': readerStore.selections.voice === voice.ShortName,
+                }" @click="useVoice(voice)">
                   use
                 </button>
               </div>
@@ -56,8 +56,23 @@
 </template>
 
 <script lang="ts" setup>
+import type { IAiVoice } from '@/services/TtsService/EdgeTTS';
+import { useReaderStore } from '@/stores/ReaderStore';
 import { vOnClickOutside } from '@vueuse/components';
 import { OhVueIcon } from 'oh-vue-icons';
+import { computed } from 'vue';
+
+const readerStore = useReaderStore()
+
+const filteredVoices = computed(() => {
+  return readerStore.voices
+    .filter(v => v.Locale === readerStore.selections.local)
+    .map(v => {
+      v.FriendlyName = v.FriendlyName.split('-')[0].trim()
+      return v
+    })
+    .sort((a, b) => a.FriendlyName > b.FriendlyName ? 1 : -1)
+})
 
 function hide() {
   const element = document.getElementById('voice_select_modal') as HTMLDialogElement
@@ -65,5 +80,9 @@ function hide() {
   if (element.open) {
     element.close()
   }
+}
+
+function useVoice(voice: IAiVoice) {
+  readerStore.selections.voice = voice.ShortName
 }
 </script>

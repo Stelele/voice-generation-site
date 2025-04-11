@@ -17,6 +17,8 @@ import {
   BiPeople,
   BiPerson,
   BiGearFill,
+  BiPlay,
+  RiUserVoiceLine,
 } from 'oh-vue-icons/icons'
 
 
@@ -40,5 +42,7 @@ export function importIcons() {
     BiPerson,
     BiGearFill,
     BiSearch,
+    BiPlay,
+    RiUserVoiceLine,
   )
 }

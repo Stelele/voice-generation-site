@@ -1,6 +1,7 @@
+import type { IAiVoice } from "@/services/TtsService/EdgeTTS";
 import type { SynthOptions } from "@/services/TtsService/TtsService";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 export const useReaderStore = defineStore('ReaderStore', () => {
   const text = ref('Hello World')
@@ -10,10 +11,32 @@ export const useReaderStore = defineStore('ReaderStore', () => {
     rate: 0,
     volume: 100,
   })
+  const voices = ref<IAiVoice[]>([])
+  const locals = computed(() => {
+    const locs = voices.value.map(v => v.Locale)
+    const uniqueLocs = [...new Set(locs)]
+    return uniqueLocs.map(loc => {
+      const voice = voices.value.find(v => v.Locale === loc)
+      if (!voice) return { label: loc, value: loc }
+      const label = voice.FriendlyName.split('-')[1].trim()
+      return {
+        label,
+        value: loc,
+      }
+    }).sort((a, b) => a.label > b.label ? 1 : -1)
+  })
+
+  const selections = ref<{ local: string | undefined; voice: string | undefined }>({
+    local: "en-US",
+    voice: undefined,
+  })
 
   return {
     text,
     audio,
     synthOptions,
+    voices,
+    locals,
+    selections,
   }
 })
