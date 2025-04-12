@@ -18,7 +18,7 @@ export const useReaderStore = defineStore('ReaderStore', () => {
     return uniqueLocs.map(loc => {
       const voice = voices.value.find(v => v.Locale === loc)
       if (!voice) return { label: loc, value: loc }
-      const label = voice.FriendlyName.split('-')[1].trim()
+      const label = voice.FriendlyName.split('-')[1]?.trim() ?? loc
       return {
         label,
         value: loc,

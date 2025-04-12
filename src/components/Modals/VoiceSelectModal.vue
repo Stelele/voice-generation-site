@@ -84,5 +84,6 @@ function hide() {
 
 function useVoice(voice: IAiVoice) {
   readerStore.selections.voice = voice.ShortName
+  readerStore.selections.url = voice.imageurl
 }
 </script>
