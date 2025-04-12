@@ -21,6 +21,7 @@ export interface IAiVoice {
   Locale: string
   Name: string
   ShortName: string
+  imageurl: string
 }
 
 export class EdgeTTS {

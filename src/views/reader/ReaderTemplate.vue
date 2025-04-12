@@ -26,6 +26,9 @@ onBeforeMount(() => {
 })
 
 async function getAIVoices() {
-  readerStore.voices = await TtsService.getVoices()
+  readerStore.voices = (await TtsService.getVoices()).map(v => {
+    v.imageurl = `https://avatar.iran.liara.run/public/${v.Gender === 'Male' ? 'boy' : 'girl'}?username=${v.ShortName}`
+    return v
+  })
 }
 </script>

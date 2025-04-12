@@ -7,8 +7,8 @@
     </div>
     <div class="flex gap-7 items-center h-full">
       <div>
-        <button class="btn btn-circle btn-ghost">
-          <OhVueIcon name="ri-user-voice-line" :scale="1.4" @click="openModal('voice_select_modal')" />
+        <button class="btn btn-circle btn-ghost" @click="openModal('voice_select_modal')">
+          <img :url="readerStore.selections.url" />
         </button>
       </div>
       <div v-for="button, idx in midButtons" :key="idx">

@@ -26,9 +26,10 @@ export const useReaderStore = defineStore('ReaderStore', () => {
     }).sort((a, b) => a.label > b.label ? 1 : -1)
   })
 
-  const selections = ref<{ local: string | undefined; voice: string | undefined }>({
+  const selections = ref<{ local: string; voice: string; url: string }>({
     local: "en-US",
-    voice: undefined,
+    voice: "en-US-AnaNeural",
+    url: "https://avatar.iran.liara.run/public/girl?username=en-US-AnaNeural",
   })
 
   return {

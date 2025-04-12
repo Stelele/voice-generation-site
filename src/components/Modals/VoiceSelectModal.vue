@@ -26,7 +26,7 @@
           <ul class="list bg-base-100 rounded-box shadow-md">
             <li v-for="voice, idx in filteredVoices" :key="idx"
               class="list-row group items-center hover:bg-base-300/60">
-              <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/1@94.webp" />
+              <div><img class="size-10 rounded-box" :src="voice.imageurl" />
               </div>
               <div class="list-col-grow">
                 <div>{{ voice.FriendlyName }}</div>
