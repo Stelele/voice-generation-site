@@ -33,10 +33,11 @@
                 <div class="text-xs uppercase font-semibold opacity-60">{{ voice.Gender }}</div>
               </div>
               <div>
-                <button class="btn btn-sm btn-ghost" @click="playSample(voice)" :class="{
-                  'invisible group-hover:visible': readerStore.selections.voice !== voice.ShortName,
-                }">
-                  <OhVueIcon name="bi-play" :scale="2" />
+                <button :disabled="sampleVoice === null" class="btn btn-sm btn-ghost swap-on"
+                  @click="toggleSample(voice)" :class="{
+                    'invisible group-hover:visible': readerStore.selections.voice !== voice.ShortName,
+                  }">
+                  <OhVueIcon :name="previewIcon(voice)" :scale="2" />
                 </button>
               </div>
               <div>
@@ -62,9 +63,10 @@ import { TtsService } from '@/services/TtsService/TtsService';
 import { useReaderStore } from '@/stores/ReaderStore';
 import { vOnClickOutside } from '@vueuse/components';
 import { OhVueIcon } from 'oh-vue-icons';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const readerStore = useReaderStore()
+const sampleVoice = ref<IAiVoice | undefined | null>()
 
 const filteredVoices = computed(() => {
   return readerStore.voices
@@ -95,10 +97,31 @@ function useVoice(voice: IAiVoice) {
   readerStore.selections.url = voice.imageurl
 }
 
-async function playSample(voice: IAiVoice) {
+function isPlaying(voice: IAiVoice) {
+  if (sampleVoice.value?.ShortName !== voice.ShortName) return false
+  if (!readerStore.audio) return false
+  return !readerStore.audio.paused
+}
+
+async function toggleSample(voice: IAiVoice) {
+  if (sampleVoice.value?.ShortName === voice.ShortName && readerStore.audio && !readerStore.audio.paused) {
+    readerStore.audio.pause()
+    sampleVoice.value = undefined
+    return
+  }
+
+  sampleVoice.value = null
   const text = await DadJokesService.getJoke()
   const audioStr = await TtsService.getBase64StrAudio(text, voice.ShortName)
   readerStore.audio = new Audio(audioStr)
   readerStore.audio.play()
+  readerStore.audio.addEventListener('ended', () => {
+    sampleVoice.value = undefined
+  })
+  sampleVoice.value = voice
+}
+
+function previewIcon(voice: IAiVoice) {
+  return isPlaying(voice) ? 'bi-pause' : 'bi-play'
 }
 </script>
