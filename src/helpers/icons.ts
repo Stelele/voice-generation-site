@@ -20,6 +20,7 @@ import {
   BiPlay,
   RiUserVoiceLine,
   BiPause,
+  BiPauseCircleFill,
 } from 'oh-vue-icons/icons'
 
 
@@ -31,6 +32,7 @@ export function importIcons() {
     BiArrowCounterclockwise,
     BiArrowClockwise,
     BiPlayCircleFill,
+    BiPauseCircleFill,
     BiBadgeCc,
     BiClipboard2,
     FaRegularSave,

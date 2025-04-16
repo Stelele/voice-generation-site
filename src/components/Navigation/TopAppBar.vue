@@ -12,7 +12,7 @@
         </button>
       </div>
       <div v-for="button, idx in midButtons" :key="idx">
-        <button class="btn btn-circle btn-ghost">
+        <button :disabled="button.disabled" class="btn btn-circle btn-ghost">
           <OhVueIcon :name="button.icon" :scale="button.scale ?? 1.6" @click="button.onClick" />
         </button>
       </div>
@@ -86,9 +86,28 @@ function toggleCloudClick() {
 }
 
 async function playAudio() {
+  if (readerStore.audio && !readerStore.audio.paused) {
+    midButtons.value[1].icon = "bi-play-circle-fill"
+    readerStore.audio.pause()
+    return
+  } else if (readerStore.audio) {
+    readerStore.audio.play()
+    midButtons.value[1].icon = "bi-pause-circle-fill"
+    return
+  }
+
+  midButtons.value[1].disabled = true
+
   const audioStr = await TtsService.getBase64StrAudio(readerStore.text, readerStore.selections.voice, readerStore.synthOptions)
   readerStore.audio = new Audio(audioStr)
   readerStore.audio.play()
+  readerStore.audio.addEventListener('ended', () => {
+    midButtons.value[1].icon = "bi-play-circle-fill"
+    readerStore.audio = undefined
+  })
+
+  midButtons.value[1].icon = "bi-pause-circle-fill"
+  midButtons.value[1].disabled = false
 }
 
 function openModal(elementId: string) {

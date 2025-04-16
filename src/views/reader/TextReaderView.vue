@@ -16,6 +16,11 @@ const readerStore = useReaderStore()
 const paragraphs = ref(readerStore.text.split('\n'))
 
 function updateContent(event: Event, index: number) {
+  if (readerStore.audio) {
+    readerStore.audio.pause()
+    readerStore.audio = undefined
+  }
+
   const newText = (event.target as HTMLParagraphElement).innerText
 
   paragraphs.value[index] = newText
@@ -23,6 +28,11 @@ function updateContent(event: Event, index: number) {
 }
 
 function createParagraphs(index: number) {
+  if (readerStore.audio) {
+    readerStore.audio.pause()
+    readerStore.audio = undefined
+  }
+
   const pEls = document.querySelectorAll('p')
 
   const p = document.createElement('p')
