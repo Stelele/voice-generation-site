@@ -1,0 +1,38 @@
+name: Build and Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
+
+      - name: Building Front End
+        run: |
+          npm install
+          npm run build
+          git clone https://$PAT@github.com/stelele/voice-generation-site-built.git out
+          rm -r out/*
+          cp -R dist/* out/
+          cd out
+          cp index.html 404.html
+          git config --global user.email "giftmugweni@gmail.com"
+          git config --global user.name "stelele"
+          git add .
+          git commit -m "Deploy build files"
+          git push origin $DEPLOY_BRANCH
+        env:
+          DEPLOY_BRANCH: main
+          PAT: ${{ secrets.PAT }}
