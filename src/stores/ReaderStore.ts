@@ -4,7 +4,14 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
 export const useReaderStore = defineStore('ReaderStore', () => {
-  const text = ref('Hello World')
+  const text = ref(`Drag and drop your files, or type, paste, and edit text here.
+Natural Reader is new professional text-to-speech program that converts any written text into spoken words.
+We have both free and paid subscriptions to our applications to meet different users' needs on different budgets. Our Plus subscription includes exclusive features and the use of Plus and LLM (Large Language Model) Voices, our newest and most advanced voices.
+Using LLM technology, you can even clone your own voice in minutes and make it speak over 100 languages.
+Free users can sample the Premium Voices for 20 minutes per day and the Plus Voices for 5 minutes per day. Or use any available Free Voices unlimitedly.
+You can also listen and go with our mobile app. By using the mobile camera, you can even use our app to listen to physical books and notes.
+If you are interested in using our voices for non-personal use such as for Youtube videos, e-Learning, or other commercial or public purposes, please check out our Natural Reader AI Voice Generator web application.
+Our Chrome extension allows you to listen to webpages, Google Docs, online Kindle books, and emails directly from the browser. Add it to Chrome for free.`)
   const audio = ref<HTMLAudioElement | undefined>(undefined)
   const synthOptions = ref<SynthOptions>({
     pitch: 0,
@@ -12,19 +19,7 @@ export const useReaderStore = defineStore('ReaderStore', () => {
     volume: 100,
   })
   const voices = ref<IAiVoice[]>([])
-  const locals = computed(() => {
-    const locs = voices.value.map(v => v.Locale)
-    const uniqueLocs = [...new Set(locs)]
-    return uniqueLocs.map(loc => {
-      const voice = voices.value.find(v => v.Locale === loc)
-      if (!voice) return { label: loc, value: loc }
-      const label = voice.FriendlyName.split('-')[1]?.trim() ?? loc
-      return {
-        label,
-        value: loc,
-      }
-    }).sort((a, b) => a.label > b.label ? 1 : -1)
-  })
+  const locals = ref<{ label: string; value: string }[]>([])
 
   const selections = ref<{ local: string; voice: string; url: string }>({
     local: "en-US",
