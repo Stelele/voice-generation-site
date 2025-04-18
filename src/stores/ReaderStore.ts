@@ -1,4 +1,4 @@
-import type { IAiVoice } from "@/services/TtsService/EdgeTTS";
+import type { IAiMetaData, IAiVoice } from "@/services/TtsService/EdgeTTS";
 import type { SynthOptions } from "@/services/TtsService/TtsService";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
@@ -20,6 +20,7 @@ Our Chrome extension allows you to listen to webpages, Google Docs, online Kindl
   })
   const voices = ref<IAiVoice[]>([])
   const locals = ref<{ label: string; value: string }[]>([])
+  const metaData = ref<IAiMetaData[]>([])
 
   const selections = ref<{ local: string; voice: string; url: string }>({
     local: "en-US",
@@ -34,5 +35,6 @@ Our Chrome extension allows you to listen to webpages, Google Docs, online Kindl
     voices,
     locals,
     selections,
+    metaData,
   }
 })

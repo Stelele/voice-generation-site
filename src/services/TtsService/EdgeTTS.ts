@@ -24,9 +24,20 @@ export interface IAiVoice {
   imageurl: string
 }
 
+export interface IAiMetaData {
+  Offset: number
+  Duration: number
+  text: {
+    Text: string
+    Length: number
+    BoundaryType: string
+  }
+}
+
 export class EdgeTTS {
   private message_stream: Promise<ArrayBuffer>[] = []
   private audio_stream: Buffer[] = [];
+  private subtitle_stream: IAiMetaData[] = []
   private ws!: WebSocket;
   private isProcessingDone = false;
 
@@ -120,6 +131,12 @@ export class EdgeTTS {
       return
     }
 
+    const audioMetaData = "Path:audio.metadata"
+    if (evt.data.includes(audioMetaData)) {
+      const data = evt.data.slice(evt.data.indexOf(audioMetaData) + audioMetaData.length)
+      this.subtitle_stream.push(JSON.parse(data).Metadata[0].Data)
+    }
+
     if (evt.data.includes("Path:turn.end")) {
       this.ws.close();
     }
@@ -167,7 +184,7 @@ export class EdgeTTS {
     }
 
     const audioBuffer = Buffer.concat(this.audio_stream);
-    return audioBuffer.toString('base64');
+    return { audio: audioBuffer.toString('base64'), metaData: this.subtitle_stream }
   }
 
   public async toBase64() {
@@ -176,6 +193,6 @@ export class EdgeTTS {
     }
 
     const audioBuffer = Buffer.concat(this.audio_stream);
-    return audioBuffer.toString('base64');
+    return { audio: audioBuffer.toString('base64'), metaData: this.subtitle_stream }
   }
 }

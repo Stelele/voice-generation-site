@@ -98,12 +98,17 @@ async function playAudio() {
 
   midButtons.value[1].disabled = true
 
-  const audioStr = await TtsService.getBase64StrAudio(readerStore.text, readerStore.selections.voice, readerStore.synthOptions)
+  const { audio: audioStr, metaData } = await TtsService.getBase64StrAudio(readerStore.text, readerStore.selections.voice, readerStore.synthOptions)
+  readerStore.metaData = metaData
+
   readerStore.audio = new Audio(audioStr)
   readerStore.audio.play()
   readerStore.audio.addEventListener('ended', () => {
     midButtons.value[1].icon = "bi-play-circle-fill"
     readerStore.audio = undefined
+  })
+  readerStore.audio.addEventListener('timeupdate', () => {
+    console.log(readerStore.audio?.currentTime)
   })
 
   midButtons.value[1].icon = "bi-pause-circle-fill"

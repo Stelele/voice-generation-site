@@ -20,7 +20,8 @@ export class TtsService {
       pitch: options?.pitch ? `${this.clampValue(-99, 99, options.pitch)}Hz` : undefined,
     })
 
-    return `data:audio/x-wav;base64,${await tts.toBase64()}`
+    const response = await tts.toBase64()
+    return { audio: `data:audio/x-wav;base64,${response.audio}`, metaData: response.metaData }
   }
 
   private static clampValue(min: number, max: number, val: number) {
