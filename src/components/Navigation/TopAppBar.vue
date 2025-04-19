@@ -46,6 +46,7 @@ import { OhVueIcon } from 'oh-vue-icons';
 import { computed, ref } from 'vue';
 import VoiceSettingsDropDown from '@/components/DropDowns/VoiceSettingsDropDown.vue';
 import VoiceSelectModal from '@/components/Modals/VoiceSelectModal.vue';
+import { clearAudioState } from '@/helpers/functions';
 
 const readerStore = useReaderStore()
 
@@ -105,10 +106,51 @@ async function playAudio() {
   readerStore.audio.play()
   readerStore.audio.addEventListener('ended', () => {
     midButtons.value[1].icon = "bi-play-circle-fill"
-    readerStore.audio = undefined
+    clearAudioState()
   })
   readerStore.audio.addEventListener('timeupdate', () => {
-    console.log(readerStore.audio?.currentTime)
+    const curTime = readerStore.audio?.currentTime
+    if (curTime === undefined) return
+
+    const unchangedText = readerStore.text.split('\n')
+
+    const paragraphs = document.querySelectorAll('p')
+    const curSentence = readerStore.timeSlices.sentenceSlices
+      .find(slice => slice.minTime <= curTime && slice.maxTime > curTime)
+
+    if (!curSentence) return
+
+    const curParagraphId = `p-${curSentence.index}`
+    let curParagraph: HTMLParagraphElement | undefined = undefined
+    for (let i = 0; i < paragraphs.length; i++) {
+      const paragraph = paragraphs[i]
+      if (paragraph.id !== curParagraphId) {
+        if (paragraph.classList.contains('highlighted-sentence')) {
+          paragraph.classList.remove('highlighted-sentence')
+          paragraph.innerHTML = unchangedText[i]
+        }
+        continue
+      }
+
+      if (!paragraph.classList.contains('highlighted-sentence')) {
+        paragraph.classList.add('highlighted-sentence')
+      }
+
+      curParagraph = paragraph
+    }
+
+    if (!curSentence.children) return
+
+    const curWord = curSentence.children?.find(c => c.minTime <= curTime && c.maxTime > curTime)
+    if (!curWord) return
+
+    const unchangedWords = unchangedText[curSentence.index].split(" ")
+    const wordIndex = curWord.index - curSentence.children[0].index
+    unchangedWords[wordIndex] = `<span class="highlighted-word">${unchangedWords[wordIndex]}</span>`
+
+    if (curParagraph) {
+      curParagraph.innerHTML = unchangedWords.join(" ")
+    }
   })
 
   midButtons.value[1].icon = "bi-pause-circle-fill"
@@ -121,3 +163,13 @@ function openModal(elementId: string) {
 }
 
 </script>
+
+<style>
+.highlighted-sentence {
+  background-color: var(--color-primary);
+}
+
+.highlighted-word {
+  background-color: var(--color-secondary);
+}
+</style>

@@ -3,6 +3,14 @@ import type { SynthOptions } from "@/services/TtsService/TtsService";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
+export interface ITimeSlice {
+  index: number
+  minTime: number
+  maxTime: number
+  phrase: string
+  children?: ITimeSlice[]
+}
+
 export const useReaderStore = defineStore('ReaderStore', () => {
   const text = ref(`Drag and drop your files, or type, paste, and edit text here.
 Natural Reader is new professional text-to-speech program that converts any written text into spoken words.
@@ -28,6 +36,51 @@ Our Chrome extension allows you to listen to webpages, Google Docs, online Kindl
     url: "https://avatar.iran.liara.run/public/girl?username=en-US-AnaNeural",
   })
 
+  const timeSlices = computed(() => {
+    const sentenceSlices: ITimeSlice[] = []
+    const wordSlices: ITimeSlice[] = []
+
+    if (!metaData.value.length || !text.value.length) {
+      return { sentenceSlices, wordSlices }
+    }
+
+    let min = 0
+    let index = 0
+    for (const data of metaData.value) {
+      const temp: ITimeSlice = {
+        index,
+        minTime: min,
+        maxTime: (data.Offset + data.Duration) * 100e-9,
+        phrase: data.text.Text
+      }
+      wordSlices.push(temp)
+
+      min = temp.maxTime
+      index += 1
+    }
+
+    const sentences = text.value.split('\n').map(s => s.split(' '))
+    index = 0
+    let curWordPos = 0
+    for (const sentence of sentences) {
+      const words = wordSlices.slice(curWordPos, curWordPos + sentence.length)
+      const minTime = words[0].minTime
+      const maxTime = words[words.length - 1].maxTime
+      sentenceSlices.push({
+        index,
+        minTime,
+        maxTime,
+        phrase: words.map(x => x.phrase).join(" "),
+        children: words,
+      })
+
+      curWordPos += words.length
+      index += 1
+    }
+
+    return { wordSlices, sentenceSlices }
+  })
+
   return {
     text,
     audio,
@@ -36,5 +89,6 @@ Our Chrome extension allows you to listen to webpages, Google Docs, online Kindl
     locals,
     selections,
     metaData,
+    timeSlices,
   }
 })

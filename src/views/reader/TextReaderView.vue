@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts" setup>
+import { clearAudioState } from '@/helpers/functions';
 import { useReaderStore } from '@/stores/ReaderStore';
 import { ref } from 'vue';
 
@@ -16,10 +17,7 @@ const readerStore = useReaderStore()
 const paragraphs = ref(readerStore.text.split('\n'))
 
 function updateContent(event: Event, index: number) {
-  if (readerStore.audio) {
-    readerStore.audio.pause()
-    readerStore.audio = undefined
-  }
+  clearAudioState()
 
   const newText = (event.target as HTMLParagraphElement).innerText
 
@@ -28,10 +26,7 @@ function updateContent(event: Event, index: number) {
 }
 
 function createParagraphs(index: number) {
-  if (readerStore.audio) {
-    readerStore.audio.pause()
-    readerStore.audio = undefined
-  }
+  clearAudioState()
 
   const pEls = document.querySelectorAll('p')
 
