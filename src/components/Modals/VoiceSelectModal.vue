@@ -112,7 +112,7 @@ async function toggleSample(voice: IAiVoice) {
 
   sampleVoice.value = null
   const text = await DadJokesService.getJoke()
-  const audioStr = await TtsService.getBase64StrAudio(text, voice.ShortName)
+  const { audio: audioStr } = await TtsService.getBase64StrAudio(text, voice.ShortName)
   readerStore.audio = new Audio(audioStr)
   readerStore.audio.play()
   readerStore.audio.addEventListener('ended', () => {
