@@ -57,16 +57,22 @@
 </template>
 
 <script lang="ts" setup>
+import { clearAudioState } from '@/helpers/functions';
 import { DadJokesService } from '@/services/DadJokesService/DadJokesService';
 import type { IAiVoice } from '@/services/TtsService/EdgeTTS';
 import { TtsService } from '@/services/TtsService/TtsService';
 import { useReaderStore } from '@/stores/ReaderStore';
 import { vOnClickOutside } from '@vueuse/components';
 import { OhVueIcon } from 'oh-vue-icons';
-import { computed, ref } from 'vue';
+import { computed, onUnmounted, ref } from 'vue';
 
 const readerStore = useReaderStore()
 const sampleVoice = ref<IAiVoice | undefined | null>()
+const sampleAudio = ref<HTMLAudioElement | undefined>()
+
+onUnmounted(() => {
+  sampleAudio.value = undefined
+})
 
 const filteredVoices = computed(() => {
   return readerStore.voices
@@ -95,17 +101,18 @@ function hide() {
 function useVoice(voice: IAiVoice) {
   readerStore.selections.voice = voice.ShortName
   readerStore.selections.url = voice.imageurl
+  clearAudioState()
 }
 
 function isPlaying(voice: IAiVoice) {
   if (sampleVoice.value?.ShortName !== voice.ShortName) return false
-  if (!readerStore.audio) return false
-  return !readerStore.audio.paused
+  if (!sampleAudio.value) return false
+  return !sampleAudio.value.paused
 }
 
 async function toggleSample(voice: IAiVoice) {
-  if (sampleVoice.value?.ShortName === voice.ShortName && readerStore.audio && !readerStore.audio.paused) {
-    readerStore.audio.pause()
+  if (sampleVoice.value?.ShortName === voice.ShortName && sampleAudio.value && !sampleAudio.value.paused) {
+    sampleAudio.value.pause()
     sampleVoice.value = undefined
     return
   }
@@ -113,10 +120,11 @@ async function toggleSample(voice: IAiVoice) {
   sampleVoice.value = null
   const text = await DadJokesService.getJoke()
   const { audio: audioStr } = await TtsService.getBase64StrAudio(text, voice.ShortName)
-  readerStore.audio = new Audio(audioStr)
-  readerStore.audio.play()
-  readerStore.audio.addEventListener('ended', () => {
+  sampleAudio.value = new Audio(audioStr)
+  sampleAudio.value.play()
+  sampleAudio.value.addEventListener('ended', () => {
     sampleVoice.value = undefined
+    sampleAudio.value = undefined
   })
   sampleVoice.value = voice
 }

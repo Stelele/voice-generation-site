@@ -45,12 +45,16 @@
 </template>
 
 <script lang="ts" setup>
-import { remap } from '@/helpers/functions';
+import { clearAudioState, remap } from '@/helpers/functions';
 import { useReaderStore } from '@/stores/ReaderStore';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { OhVueIcon } from 'oh-vue-icons';
 
 const readerStore = useReaderStore()
+
+watch(readerStore.synthOptions, () => {
+  clearAudioState()
+})
 
 const speakingSpeed = computed(() => remap(readerStore.synthOptions.rate ?? 0, { min: -100, max: 100 }, { min: 0, max: 2 }).toFixed(1))
 const pitchSize = computed(() => remap(readerStore.synthOptions.pitch ?? 0, { min: -100, max: 100 }, { min: 0, max: 2 }).toFixed(1))

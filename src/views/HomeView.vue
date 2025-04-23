@@ -1,9 +1,26 @@
 <template>
-  <h1 class="text-3xl font-bold font-italic underline">
-    Hello world!
-  </h1>
-  <button
-  class="inline-block cursor-pointer rounded-md bg-gray-800 px-4 py-3 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-gray-900">
-  Button
-</button>
+  <div class="flex w-full h-full flex-col">
+    <div class="navbar bg-base-100 shadow-sm">
+      <div class="flex-1 text-xl">
+        <OhVueIcon name="fa-cloudversify" :scale="3" /> Reader
+      </div>
+      <div class="flex-none">
+        <RouterLink to="/reader">
+          <button class="btn btn-primary">
+            Get Started
+          </button>
+        </RouterLink>
+      </div>
+    </div>
+    <div class="text-5xl text-center mt-20 font-extralight">
+      <h1>AI Text To Speech</h1>
+    </div>
+    <div class="text-7xl text-center mt-16 font-extrabold">
+      <h2>Cloud Reader</h2>
+    </div>
+  </div>
 </template>
+
+<script lang="ts" setup>
+import { OhVueIcon } from 'oh-vue-icons';
+</script>

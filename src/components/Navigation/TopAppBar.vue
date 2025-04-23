@@ -3,7 +3,9 @@
     class="w-full h-14 bg-base-300 flex justify-between items-center py-2 px-3.5 rounded-box border-b-2 border-base-100">
     <div class="flex items-center hover:cursor-pointer" @click="toggleCloudClick"
       @mouseover="toggleCloudAnimation(true)" @mouseleave="toggleCloudAnimation(false)">
-      <OhVueIcon name="fa-cloudversify" :scale="2.8" :animation="cloudAnimation" />
+      <RouterLink to="/">
+        <OhVueIcon name="fa-cloudversify" :scale="2.8" :animation="cloudAnimation" />
+      </RouterLink>
     </div>
     <div class="flex gap-7 items-center h-full">
       <div>
@@ -43,7 +45,7 @@
 import { TtsService } from '@/services/TtsService/TtsService';
 import { useReaderStore } from '@/stores/ReaderStore';
 import { OhVueIcon } from 'oh-vue-icons';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import VoiceSettingsDropDown from '@/components/DropDowns/VoiceSettingsDropDown.vue';
 import VoiceSelectModal from '@/components/Modals/VoiceSelectModal.vue';
 import { clearAudioState } from '@/helpers/functions';
@@ -56,6 +58,14 @@ interface Button {
   disabled?: boolean
   onClick?: () => void
 }
+
+watch(readerStore, () => {
+  if (!readerStore.audio) {
+    midButtons.value[1].icon = 'bi-play-circle-fill'
+  } else {
+    midButtons.value[1].icon = 'bi-pause-circle-fill'
+  }
+})
 
 const midButtons = ref<Button[]>([
   {
