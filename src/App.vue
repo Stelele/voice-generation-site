@@ -16,9 +16,16 @@ onBeforeMount(() => {
 async function getAIVoices() {
   const voices = await TtsService.getVoices()
   readerStore.voices = voices.map(v => {
-    v.imageurl = `https://avatar.iran.liara.run/public/${v.Gender === 'Male' ? 'boy' : 'girl'}?username=${v.ShortName}`
+    v.imageurl = `/voices-faces/${v.ShortName}.png`
     return v
   })
+
+  const urls = readerStore.voices.map(v => {
+    const temp: Record<string, string> = {}
+    temp[v.ShortName] = v.imageurl
+    return temp
+  })
+  console.log({ urls })
 
   const uniqueLocs = [...new Set(voices.map(v => v.Locale))]
   readerStore.locals = uniqueLocs.map(loc => {
