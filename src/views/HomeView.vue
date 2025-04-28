@@ -12,15 +12,17 @@
         </RouterLink>
       </div>
     </div>
-    <div class="text-5xl text-center mt-20 font-extralight">
+    <div class="text-5xl text-center mt-16 font-extralight">
       <h1>AI Text To Speech</h1>
     </div>
     <div class="text-7xl text-center mt-16 font-extrabold">
       <h2>Cloud Reader</h2>
     </div>
+    <VoiceCatalogue />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { OhVueIcon } from 'oh-vue-icons';
+import VoiceCatalogue from '@/partials/home/VoiceCatalogue.vue';
 </script>
