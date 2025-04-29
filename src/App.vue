@@ -20,13 +20,6 @@ async function getAIVoices() {
     return v
   })
 
-  const urls = readerStore.voices.map(v => {
-    const temp: Record<string, string> = {}
-    temp[v.ShortName] = v.imageurl
-    return temp
-  })
-  console.log({ urls })
-
   const uniqueLocs = [...new Set(voices.map(v => v.Locale))]
   readerStore.locals = uniqueLocs.map(loc => {
     const voice = voices.find(v => v.Locale === loc)

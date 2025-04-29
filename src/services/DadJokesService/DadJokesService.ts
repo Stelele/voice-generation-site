@@ -7,6 +7,6 @@ export class DadJokesService {
       }
     })).json()
 
-    return response.joke
+    return response.joke as string
   }
 }
