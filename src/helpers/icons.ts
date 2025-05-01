@@ -23,6 +23,7 @@ import {
   BiPauseCircleFill,
   BiVolumeUp,
   GiSoundWaves,
+  CoArrowRight,
 } from 'oh-vue-icons/icons'
 
 
@@ -51,6 +52,7 @@ export function importIcons() {
     RiUserVoiceLine,
     BiPause,
     BiVolumeUp,
-    GiSoundWaves
+    GiSoundWaves,
+    CoArrowRight,
   )
 }

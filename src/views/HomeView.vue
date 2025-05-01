@@ -19,10 +19,19 @@
       <h2>Cloud Reader</h2>
     </div>
     <VoiceCatalogue />
+    <div class="flex justify-center mt-4">
+      <RouterLink to="/reader">
+        <button class="btn btn-link btn-xl">Get Started For Free
+          <OhVueIcon name="co-arrow-right" />
+        </button>
+      </RouterLink>
+    </div>
+    <TrustedBySection />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { OhVueIcon } from 'oh-vue-icons';
 import VoiceCatalogue from '@/partials/home/VoiceCatalogue.vue';
+import TrustedBySection from '@/partials/home/TrustedBySection.vue';
 </script>
